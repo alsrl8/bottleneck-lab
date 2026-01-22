@@ -24,6 +24,14 @@ func main() {
 
 	// Health check endpoint
 	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		// Check database connection
+		if err := d.Ping(); err != nil {
+			slog.Error("health check failed: database ping error", "err", err)
+			w.WriteHeader(http.StatusServiceUnavailable)
+			_, _ = w.Write([]byte("Service Unavailable: DB connection error"))
+			return
+		}
+
 		w.WriteHeader(http.StatusOK)
 		_, err := w.Write([]byte("OK"))
 		if err != nil {
