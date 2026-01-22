@@ -27,7 +27,7 @@ func main() {
 
 	// Setup Gin router
 	r := gin.Default()
-	router.RegisterHealth(r, d)
+	router.RegisterEndpoints(r, d)
 
 	server := &http.Server{
 		Addr:    ":8080",
