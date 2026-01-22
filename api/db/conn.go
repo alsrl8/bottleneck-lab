@@ -2,15 +2,20 @@ package db
 
 import (
 	"database/sql"
+	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func Connect() (*sql.DB, error) {
-	db, err := sql.Open("mysql", "user:password@tcp(127.0.0.1:3306)/test")
+	dsn := os.Getenv("DB_DSN")
+	if dsn == "" {
+		dsn = "user:password@tcp(127.0.0.1:3306)/test"
+	}
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	db.SetConnMaxLifetime(time.Minute * 3)

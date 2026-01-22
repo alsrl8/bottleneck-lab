@@ -22,7 +22,20 @@ services:
     # 컨테이너 재시작 정책
     restart: unless-stopped
 
-
+  # API 서비스 추가
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: bottleneck-lab-api
+    ports:
+      - "8080:8080"
+    environment:
+      # MySQL 컨테이너 서비스 이름(mysql)을 호스트 이름으로 사용
+      - DB_DSN=user:password@tcp(mysql:3306)/test
+    depends_on:
+      - mysql
+    restart: unless-stopped
 
 # 볼륨 정의
 volumes:
