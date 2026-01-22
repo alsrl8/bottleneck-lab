@@ -377,14 +377,7 @@
             content: '📸';
         }
 
-        .result-images {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-        }
-
         .result-image-wrapper {
-            position: relative;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border);
@@ -403,61 +396,10 @@
             transform: scale(1.02);
         }
 
-        .result-image-wrapper .remove-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: rgba(239, 68, 68, 0.9);
-            border: none;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .result-image-wrapper:hover .remove-btn {
-            opacity: 1;
-        }
-
-        .add-image-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 120px;
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            background: transparent;
+        .result-empty {
             color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        .add-image-btn:hover {
-            border-color: var(--accent-blue);
-            color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .add-image-btn .icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .add-image-btn .text {
-            font-size: 12px;
-        }
-
-        .image-input {
-            display: none;
+            font-size: 13px;
+            font-style: italic;
         }
 
         /* Lightbox */
@@ -692,7 +634,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="1-1"></div>
+                        <div class="result-image-wrapper" data-task-id="1-1">
+                            <img src="results/1-1.png" alt="Task 1-1 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -735,7 +679,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="1-2"></div>
+                        <div class="result-image-wrapper" data-task-id="1-2">
+                            <img src="results/1-2.png" alt="Task 1-2 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -774,7 +720,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="1-3"></div>
+                        <div class="result-image-wrapper" data-task-id="1-3">
+                            <img src="results/1-3.png" alt="Task 1-3 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -826,7 +774,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="2-1"></div>
+                        <div class="result-image-wrapper" data-task-id="2-1">
+                            <img src="results/2-1.png" alt="Task 2-1 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -874,7 +824,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="2-2"></div>
+                        <div class="result-image-wrapper" data-task-id="2-2">
+                            <img src="results/2-2.png" alt="Task 2-2 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -928,7 +880,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="2-3"></div>
+                        <div class="result-image-wrapper" data-task-id="2-3">
+                            <img src="results/2-3.png" alt="Task 2-3 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -974,7 +928,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="2-4"></div>
+                        <div class="result-image-wrapper" data-task-id="2-4">
+                            <img src="results/2-4.png" alt="Task 2-4 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1032,7 +988,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="3-1"></div>
+                        <div class="result-image-wrapper" data-task-id="3-1">
+                            <img src="results/3-1.png" alt="Task 3-1 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1076,7 +1034,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="3-2"></div>
+                        <div class="result-image-wrapper" data-task-id="3-2">
+                            <img src="results/3-2.png" alt="Task 3-2 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1123,7 +1083,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="3-3"></div>
+                        <div class="result-image-wrapper" data-task-id="3-3">
+                            <img src="results/3-3.png" alt="Task 3-3 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1171,7 +1133,9 @@
                         <div class="result-header">
                             <div class="result-title">실습 결과</div>
                         </div>
-                        <div class="result-images" data-task-id="3-4"></div>
+                        <div class="result-image-wrapper" data-task-id="3-4">
+                            <img src="results/3-4.png" alt="Task 3-4 결과" onclick="openLightbox(this.src)" onerror="this.parentElement.innerHTML='<span class=result-empty>결과 이미지 없음</span>'">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1197,7 +1161,6 @@
 
 <script>
     const STORAGE_KEY = 'bottleneck-lab-progress';
-    const IMAGES_KEY = 'bottleneck-lab-images';
 
     // Task expand/collapse
     document.querySelectorAll('.task-header').forEach(header => {
@@ -1225,79 +1188,6 @@
 
         document.getElementById('progressFill').style.width = percentage + '%';
         document.getElementById('progressCount').textContent = `${checked} / ${total}`;
-    }
-
-    // Image handling
-    function loadImages() {
-        const saved = localStorage.getItem(IMAGES_KEY);
-        return saved ? JSON.parse(saved) : {};
-    }
-
-    function saveImages(images) {
-        localStorage.setItem(IMAGES_KEY, JSON.stringify(images));
-    }
-
-    function renderImages(taskId, container) {
-        const images = loadImages();
-        const taskImages = images[taskId] || [];
-
-        container.innerHTML = '';
-
-        taskImages.forEach((imgData, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'result-image-wrapper';
-            wrapper.innerHTML = `
-                    <img src="${imgData}" alt="실습 결과 ${index + 1}" onclick="openLightbox('${imgData}')">
-                    <button class="remove-btn" onclick="removeImage('${taskId}', ${index})">✕</button>
-                `;
-            container.appendChild(wrapper);
-        });
-
-        // Add button
-        const addBtn = document.createElement('button');
-        addBtn.className = 'add-image-btn';
-        addBtn.innerHTML = `
-                <span class="icon">+</span>
-                <span class="text">이미지 추가</span>
-            `;
-        addBtn.onclick = () => triggerImageUpload(taskId);
-        container.appendChild(addBtn);
-    }
-
-    function triggerImageUpload(taskId) {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.onchange = (e) => handleImageUpload(e, taskId);
-        input.click();
-    }
-
-    function handleImageUpload(e, taskId) {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const images = loadImages();
-            if (!images[taskId]) images[taskId] = [];
-            images[taskId].push(event.target.result);
-            saveImages(images);
-
-            const container = document.querySelector(`[data-task-id="${taskId}"]`);
-            renderImages(taskId, container);
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function removeImage(taskId, index) {
-        const images = loadImages();
-        if (images[taskId]) {
-            images[taskId].splice(index, 1);
-            saveImages(images);
-
-            const container = document.querySelector(`[data-task-id="${taskId}"]`);
-            renderImages(taskId, container);
-        }
     }
 
     // Lightbox
@@ -1341,12 +1231,6 @@
             saveProgress(progress);
             updateProgressBar();
         });
-
-        // Initialize image containers
-        const imageContainer = task.querySelector('.result-images');
-        if (imageContainer) {
-            renderImages(taskId, imageContainer);
-        }
     });
 
     updateProgressBar();

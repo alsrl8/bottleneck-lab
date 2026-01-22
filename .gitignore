@@ -9,7 +9,7 @@
 *.test
 
 # Output of the go coverage tool
-*.out
+*.outranch
 
 # Go workspace file
 go.work
