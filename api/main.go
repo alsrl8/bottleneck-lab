@@ -2,6 +2,7 @@ package main
 
 import (
 	"bottleneck-lab/db"
+	"bottleneck-lab/server/router"
 	"context"
 	"errors"
 	"log/slog"
@@ -10,6 +11,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -22,27 +25,13 @@ func main() {
 	}
 	slog.Info("database connected")
 
-	// Health check endpoint
-	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		// Check database connection
-		if err := d.Ping(); err != nil {
-			slog.Error("health check failed: database ping error", "err", err)
-			w.WriteHeader(http.StatusServiceUnavailable)
-			_, _ = w.Write([]byte("Service Unavailable: DB connection error"))
-			return
-		}
-
-		w.WriteHeader(http.StatusOK)
-		_, err := w.Write([]byte("OK"))
-		if err != nil {
-			slog.Error("failed to write health check response", "err", err)
-			return
-		}
-	})
+	// Setup Gin router
+	r := gin.Default()
+	router.RegisterHealth(r, d)
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: http.DefaultServeMux,
+		Handler: r,
 	}
 
 	go func() {
