@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bottleneck Lab - 병목 실습 프로젝트</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0b;
+            --bg-card: #111113;
+            --bg-card-hover: #18181b;
+            --border: #27272a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #52525b;
+            --accent-red: #ef4444;
+            --accent-orange: #f97316;
+            --accent-yellow: #eab308;
+            --accent-green: #22c55e;
+            --accent-blue: #3b82f6;
+            --accent-purple: #a855f7;
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            --gradient-warning: linear-gradient(135deg, #f97316 0%, #eab308 100%);
+            --gradient-success: linear-gradient(135deg, #22c55e 0%, #3b82f6 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 80px;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .badge {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-red);
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 8px 16px;
+            border-radius: 100px;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: clamp(48px, 8vw, 72px);
+            font-weight: 900;
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Overview Section */
+        .overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 80px;
+        }
+
+        .overview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .overview-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .overview-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .overview-card:nth-child(1) .overview-icon { background: rgba(239, 68, 68, 0.15); }
+        .overview-card:nth-child(2) .overview-icon { background: rgba(59, 130, 246, 0.15); }
+        .overview-card:nth-child(3) .overview-icon { background: rgba(34, 197, 94, 0.15); }
+
+        .overview-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .overview-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Phase Section */
+        .phase {
+            margin-bottom: 60px;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .phase-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phase-1 .phase-number { background: var(--gradient-danger); }
+        .phase-2 .phase-number { background: var(--gradient-warning); }
+        .phase-3 .phase-number { background: var(--gradient-success); }
+
+        .phase-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .phase-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+
+        /* Task Cards */
+        .tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .task {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .task:hover {
+            border-color: #3f3f46;
+        }
+
+        .task-header {
+            padding: 20px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .task-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .task-checkbox:hover {
+            border-color: var(--accent-green);
+        }
+
+        .task-checkbox.checked {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+        }
+
+        .task-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .task-info {
+            flex: 1;
+        }
+
+        .task-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-db { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+        .tag-network { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+        .tag-memory { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
+        .tag-cpu { background: rgba(249, 115, 22, 0.15); color: var(--accent-orange); }
+        .tag-infra { background: rgba(34, 197, 94, 0.15); color: var(--accent-green); }
+
+        .task-brief {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .task-toggle {
+            color: var(--text-muted);
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .task.expanded .task-toggle {
+            transform: rotate(180deg);
+        }
+
+        .task-content {
+            display: none;
+            padding: 0 24px 24px;
+            border-top: 1px solid var(--border);
+            margin-top: 0;
+        }
+
+        .task.expanded .task-content {
+            display: block;
+            padding-top: 20px;
+        }
+
+        .task-section {
+            margin-bottom: 20px;
+        }
+
+        .task-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .task-section-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .task-section p, .task-section li {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .task-section ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .task-section li::before {
+            content: '→';
+            color: var(--text-muted);
+            margin-right: 8px;
+        }
+
+        .code-block {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            white-space: pre;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 100;
+        }
+
+        .progress-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--border);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-success);
+            border-radius: 100px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Footer spacing */
+        .footer-space {
+            height: 80px;
+        }
+
+        /* Architecture Diagram */
+        .architecture {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 60px;
+        }
+
+        .architecture h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .architecture h2::before {
+            content: '⬡';
+            color: var(--accent-blue);
+        }
+
+        .arch-diagram {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 16px;
+            }
+
+            .phase-header {
+                flex-wrap: wrap;
+            }
+
+            .phase-desc {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 8px;
+            }
+
+            .progress-section {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .progress-label {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="badge">Backend Infrastructure Training</div>
+            <h1>Bottleneck Lab</h1>
+            <p class="subtitle">병목을 직접 만들고, 관찰하고, 해결하는 실습 프로젝트. 인스턴스 크기를 키우지 않고 문제를 해결하는 법을 배운다.</p>
+        </header>
+
+        <section class="overview">
+            <div class="overview-card">
+                <div class="overview-icon">🎯</div>
+                <h3>학습 목표</h3>
+                <p>DB connection pool, 메모리, 네트워크 레벨의 병목을 인위적으로 만들고 지표로 확인하며 튜닝하는 경험</p>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon">🛠</div>
+                <h3>기술 스택</h3>
+                <p>Go, MySQL, Docker Compose, k6/hey (부하 테스트), Prometheus/Grafana (선택)</p>
+            </div>
+            <div class="overview-card">
+                <div class="overview-icon">⏱</div>
+                <h3>예상 소요</h3>
+                <p>Phase 1: 2-3시간 / Phase 2: 3-4시간 / Phase 3: 4-5시간</p>
+            </div>
+        </section>
+
+        <section class="architecture">
+            <h2>실습 아키텍처</h2>
+            <div class="arch-diagram">┌─────────────────────────────────────────────────────────────────────────┐
+│                          Docker Compose / Local K8s                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│   ┌──────────────┐      ┌──────────────────┐      ┌──────────────┐      │
+│   │   k6 / hey   │─────▶│     Go Server    │─────▶│    MySQL     │      │
+│   │  (부하 생성)  │      │                  │      │              │      │
+│   └──────────────┘      │  ┌────────────┐  │      │  - 1000만 row │      │
+│                         │  │  /metrics  │  │      │  - 제한된 conn│      │
+│                         │  │  /slow     │  │      └──────────────┘      │
+│   ┌──────────────┐      │  │  /heavy    │  │                            │
+│   │   tc/toxiproxy│      │  │  /leak     │  │      ┌──────────────┐      │
+│   │ (네트워크 조작)│─ ─ ─▶│  └────────────┘  │─────▶│  External API │      │
+│   └──────────────┘      └──────────────────┘      │   (Mock)     │      │
+│                                  │                 └──────────────┘      │
+│                                  ▼                                       │
+│                         ┌──────────────┐                                │
+│                         │   Grafana    │  (선택)                         │
+│                         └──────────────┘                                │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘</div>
+        </section>
+
+        <!-- Phase 1 -->
+        <section class="phase phase-1">
+            <div class="phase-header">
+                <div class="phase-number">01</div>
+                <h2 class="phase-title">DB Connection Pool 병목</h2>
+                <span class="phase-desc">pool exhaustion을 직접 경험하고 해결한다</span>
+            </div>
+            <div class="tasks">
+                <div class="task" data-task="1-1">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                환경 구성
+                                <span class="task-tag tag-infra">Infra</span>
+                            </div>
+                            <div class="task-brief">Docker Compose로 Go 서버 + MySQL 구성</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>기본 실습 환경을 구성하고 connection pool 상태를 노출하는 /metrics 엔드포인트를 만든다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">체크리스트</div>
+                            <ul>
+                                <li>docker-compose.yml 작성 (Go app + MySQL)</li>
+                                <li>Go 서버에 database/sql로 MySQL 연결</li>
+                                <li>MaxOpenConns를 5로 설정 (일부러 작게)</li>
+                                <li>/metrics 엔드포인트에서 db.Stats() 노출</li>
+                                <li>/slow-query 엔드포인트 생성 (SELECT SLEEP(0.1))</li>
+                            </ul>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">확인 포인트</div>
+                            <div class="code-block">curl localhost:8080/metrics
+# 응답 예시
+{
+  "db_open_connections": 0,
+  "db_in_use": 0,
+  "db_idle": 0,
+  "db_wait_count": 0
+}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task="1-2">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                Pool Exhaustion 유발
+                                <span class="task-tag tag-db">DB</span>
+                            </div>
+                            <div class="task-brief">동시 요청으로 connection pool 고갈 상태 만들기</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>5개 connection으로 100개 동시 요청을 처리하면서 wait_count가 증가하는 것을 확인한다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">실행</div>
+                            <div class="code-block"># hey 설치 후 실행
+hey -n 1000 -c 100 http://localhost:8080/slow-query
+
+# 부하 중 다른 터미널에서
+watch -n 0.5 'curl -s localhost:8080/metrics | jq'</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">관찰 포인트</div>
+                            <ul>
+                                <li>db_in_use가 5에서 고정되는지</li>
+                                <li>db_wait_count가 증가하는지</li>
+                                <li>db_wait_duration이 얼마나 쌓이는지</li>
+                                <li>hey 결과에서 latency 분포 확인</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task="1-3">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                튜닝 및 비교
+                                <span class="task-tag tag-db">DB</span>
+                            </div>
+                            <div class="task-brief">MaxOpenConns를 조절하며 성능 변화 측정</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>pool 크기에 따른 성능 차이를 직접 측정하고 적정 값을 찾는다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">실험</div>
+                            <ul>
+                                <li>MaxOpenConns: 5 → 10 → 25 → 50으로 변경</li>
+                                <li>각 설정에서 동일한 부하 테스트 실행</li>
+                                <li>응답 시간 p50, p95, p99 비교</li>
+                                <li>MySQL 측 thread 수 확인 (SHOW STATUS LIKE 'Threads_connected')</li>
+                            </ul>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">학습 포인트</div>
+                            <p>pool이 크다고 무조건 좋지 않다. MySQL max_connections 한계와 context switching 비용을 고려해야 한다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 2 -->
+        <section class="phase phase-2">
+            <div class="phase-header">
+                <div class="phase-number">02</div>
+                <h2 class="phase-title">메모리 & 대용량 데이터 병목</h2>
+                <span class="phase-desc">OOM과 메모리 누수를 경험하고 스트리밍으로 해결한다</span>
+            </div>
+            <div class="tasks">
+                <div class="task" data-task="2-1">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                대용량 데이터 생성
+                                <span class="task-tag tag-db">DB</span>
+                            </div>
+                            <div class="task-brief">1000만 row 테이블 생성 및 벌크 INSERT</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>실제 PoC 환경과 유사한 대용량 테이블을 만든다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">SQL</div>
+                            <div class="code-block">CREATE TABLE sensor_logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sensor_id VARCHAR(50),
+    value DECIMAL(10,4),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_sensor_created (sensor_id, created_at)
+);
+
+-- 프로시저로 1000만 건 생성 (또는 Go 코드로 batch insert)</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">팁</div>
+                            <p>시간이 오래 걸리면 100만 건으로 시작해도 됨. 병목 유발에는 충분하다.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task="2-2">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                OOM 유발
+                                <span class="task-tag tag-memory">Memory</span>
+                            </div>
+                            <div class="task-brief">전체 데이터를 한 번에 메모리에 로드해서 터뜨리기</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>SELECT * FROM sensor_logs 결과를 slice에 전부 담아서 OOM을 경험한다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">코드 예시</div>
+                            <div class="code-block">// 이렇게 하면 안 됨 (일부러 터뜨리기)
+func loadAllData(db *sql.DB) ([]SensorLog, error) {
+    rows, _ := db.Query("SELECT * FROM sensor_logs")
+    var results []SensorLog
+    for rows.Next() {
+        var log SensorLog
+        rows.Scan(&log.ID, &log.SensorID, &log.Value, &log.CreatedAt)
+        results = append(results, log) // 메모리 계속 증가
+    }
+    return results, nil
+}</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">관찰 포인트</div>
+                            <ul>
+                                <li>runtime.MemStats로 Alloc 추이 확인</li>
+                                <li>docker stats로 컨테이너 메모리 사용량 확인</li>
+                                <li>OOM Killed 되는 시점 확인</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task="2-3">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                스트리밍/청크 처리로 해결
+                                <span class="task-tag tag-memory">Memory</span>
+                            </div>
+                            <div class="task-brief">cursor 기반 또는 LIMIT/OFFSET으로 메모리 안정화</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>동일한 데이터를 처리하되 메모리 사용량을 일정하게 유지한다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">방법 1: rows.Next() 스트리밍</div>
+                            <div class="code-block">// row 단위로 처리하고 버리기
+func processStream(db *sql.DB, handler func(SensorLog)) error {
+    rows, _ := db.Query("SELECT * FROM sensor_logs")
+    defer rows.Close()
+    for rows.Next() {
+        var log SensorLog
+        rows.Scan(...)
+        handler(log) // 처리 후 다음으로
+    }
+    return nil
+}</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">방법 2: 청크 단위 조회</div>
+                            <div class="code-block">// LIMIT/OFFSET 또는 cursor 기반
+func processChunks(db *sql.DB, chunkSize int) {
+    lastID := 0
+    for {
+        rows, _ := db.Query(
+            "SELECT * FROM sensor_logs WHERE id > ? ORDER BY id LIMIT ?",
+            lastID, chunkSize,
+        )
+        // 청크 처리 후 lastID 업데이트
+    }
+}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task="2-4">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                고루틴 누수 유발 및 해결
+                                <span class="task-tag tag-memory">Memory</span>
+                            </div>
+                            <div class="task-brief">완료되지 않는 고루틴으로 메모리 누수 경험</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>channel을 닫지 않거나 context 취소 없이 고루틴을 생성해서 누수를 만든다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">누수 코드 예시</div>
+                            <div class="code-block">// 요청마다 고루틴 생성, 종료 조건 없음
+func leakyHandler(w http.ResponseWriter, r *http.Request) {
+    ch := make(chan int)
+    go func() {
+        val := <-ch // 영원히 대기 (ch에 값 안 보냄)
+        fmt.Println(val)
+    }()
+    w.Write([]byte("ok"))
+}</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">관찰 및 해결</div>
+                            <ul>
+                                <li>runtime.NumGoroutine() 추이 확인</li>
+                                <li>요청 반복 시 고루틴 수가 계속 증가하는지 확인</li>
+                                <li>context.WithTimeout으로 고루틴 종료 조건 추가</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 3 -->
+        <section class="phase phase-3">
+            <div class="phase-header">
+                <div class="phase-number">03</div>
+                <h2 class="phase-title">네트워크 & 외부 API 병목</h2>
+                <span class="phase-desc">느린 네트워크, 타임아웃, 재시도 로직을 다룬다</span>
+            </div>
+            <div class="tasks">
+                <div class="task" data-task="3-1">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                네트워크 지연 시뮬레이션
+                                <span class="task-tag tag-network">Network</span>
+                            </div>
+                            <div class="task-brief">tc 또는 toxiproxy로 latency 주입</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>외부 API 응답이 느릴 때 서버가 어떻게 동작하는지 확인한다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">방법 1: Mock 서버에서 지연</div>
+                            <div class="code-block">// 가장 간단한 방법
+func slowExternalAPI(w http.ResponseWriter, r *http.Request) {
+    time.Sleep(3 * time.Second) // 3초 지연
+    w.Write([]byte(`{"result": "ok"}`))
+}</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">방법 2: Toxiproxy</div>
+                            <div class="code-block"># docker-compose에 toxiproxy 추가
+toxiproxy-cli create external_api -l 0.0.0.0:8474 -u mock_api:8080
+toxiproxy-cli toxic add external_api -t latency -a latency=2000</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">관찰 포인트</div>
+                            <ul>
+                                <li>외부 API 호출 시 고루틴이 쌓이는지</li>
+                                <li>메모리 사용량 증가 추이</li>
+                                <li>요청 timeout 발생 시점</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task="3-2">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                Timeout 및 Context 처리
+                                <span class="task-tag tag-network">Network</span>
+                            </div>
+                            <div class="task-brief">context.WithTimeout으로 요청 제어</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>외부 API가 느려도 내 서버는 일정 시간 내에 응답하도록 만든다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">코드 예시</div>
+                            <div class="code-block">func callExternalWithTimeout(url string) ([]byte, error) {
+    ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+    defer cancel()
+    
+    req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        if ctx.Err() == context.DeadlineExceeded {
+            return nil, fmt.Errorf("external API timeout")
+        }
+        return nil, err
+    }
+    defer resp.Body.Close()
+    return io.ReadAll(resp.Body)
+}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task="3-3">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                Circuit Breaker 구현
+                                <span class="task-tag tag-network">Network</span>
+                            </div>
+                            <div class="task-brief">연속 실패 시 요청 차단하는 패턴</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>외부 API가 죽었을 때 무한 재시도로 리소스 낭비하지 않도록 한다.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">상태 전이</div>
+                            <div class="code-block">Closed (정상)
+   │
+   │ 연속 5회 실패
+   ▼
+ Open (차단) ──── 30초 후 ────▶ Half-Open (시험)
+   ▲                               │
+   │ 실패                          │ 성공
+   └───────────────────────────────┘
+                                   │
+                                   ▼
+                              Closed (복구)</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">라이브러리</div>
+                            <ul>
+                                <li>sony/gobreaker - 가장 많이 사용</li>
+                                <li>직접 구현해보는 것도 학습에 도움</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task" data-task="3-4">
+                    <div class="task-header">
+                        <div class="task-checkbox"></div>
+                        <div class="task-info">
+                            <div class="task-name">
+                                외부 연동 로깅 체계
+                                <span class="task-tag tag-infra">Infra</span>
+                            </div>
+                            <div class="task-brief">요청/응답 전체 추적 가능한 로깅 구현</div>
+                        </div>
+                        <div class="task-toggle">▼</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-section">
+                            <div class="task-section-title">목표</div>
+                            <p>PoC 요구사항대로 외부 연동 구간에 자세한 로깅 구현.</p>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">로그 구조</div>
+                            <div class="code-block">type ExternalCallLog struct {
+    RequestID    string        `json:"request_id"`
+    Timestamp    time.Time     `json:"timestamp"`
+    Endpoint     string        `json:"endpoint"`
+    Method       string        `json:"method"`
+    StatusCode   int           `json:"status_code"`
+    Latency      time.Duration `json:"latency_ms"`
+    Error        string        `json:"error,omitempty"`
+    CircuitState string        `json:"circuit_state"`
+}</div>
+                        </div>
+                        <div class="task-section">
+                            <div class="task-section-title">체크리스트</div>
+                            <ul>
+                                <li>모든 외부 요청에 고유 request_id 부여</li>
+                                <li>요청/응답 시간 측정</li>
+                                <li>에러 발생 시 상세 정보 기록</li>
+                                <li>Circuit breaker 상태 변경 시 알림</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="footer-space"></div>
+    </div>
+
+    <div class="progress-section">
+        <span class="progress-label">전체 진행률</span>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <span class="progress-count" id="progressCount">0 / 11</span>
+    </div>
+
+    <script>
+        // Task expand/collapse
+        document.querySelectorAll('.task-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                if (e.target.classList.contains('task-checkbox')) return;
+                const task = header.closest('.task');
+                task.classList.toggle('expanded');
+            });
+        });
+
+        // Checkbox handling with localStorage
+        const STORAGE_KEY = 'bottleneck-lab-progress';
+        
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+        
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+        
+        function updateProgressBar() {
+            const total = document.querySelectorAll('.task-checkbox').length;
+            const checked = document.querySelectorAll('.task-checkbox.checked').length;
+            const percentage = (checked / total) * 100;
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressCount').textContent = `${checked} / ${total}`;
+        }
+        
+        // Initialize checkboxes
+        const progress = loadProgress();
+        document.querySelectorAll('.task').forEach(task => {
+            const taskId = task.dataset.task;
+            const checkbox = task.querySelector('.task-checkbox');
+            
+            if (progress[taskId]) {
+                checkbox.classList.add('checked');
+            }
+            
+            checkbox.addEventListener('click', (e) => {
+                e.stopPropagation();
+                checkbox.classList.toggle('checked');
+                
+                const progress = loadProgress();
+                if (checkbox.classList.contains('checked')) {
+                    progress[taskId] = true;
+                } else {
+                    delete progress[taskId];
+                }
+                saveProgress(progress);
+                updateProgressBar();
+            });
+        });
+        
+        updateProgressBar();
+    </script>
+</body>
+</html>
