@@ -21,6 +21,6 @@
 
 ## 상세 과제
 
-👉 [Bottleneck Lab 과제 보기](https://YOUR_GITHUB_USERNAME.github.io/bottleneck-lab/)
+👉 [Bottleneck Lab 과제 보기](https://alsrl8.github.io/bottleneck-lab/)
 
 > `docs/index.html`을 GitHub Pages로 호스팅하거나 로컬에서 열어서 사용
