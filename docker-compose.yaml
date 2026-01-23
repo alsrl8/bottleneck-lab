@@ -35,6 +35,7 @@ services:
       context: ./api
       dockerfile: Dockerfile
     container_name: bottleneck-lab-api
+    mem_limit: 256m  # for OOM test
     ports:
       - "8080:8080"
     environment:
