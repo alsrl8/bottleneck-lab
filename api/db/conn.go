@@ -2,7 +2,9 @@ package db
 
 import (
 	"database/sql"
+	"log/slog"
 	"os"
+	"strconv"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -18,8 +20,16 @@ func Connect() (*sql.DB, error) {
 		return nil, err
 	}
 
+	var maxOpenConnection int
+	maxOpenConnectionStr := os.Getenv("MYSQL_MAX_CONNECTIONS")
+	if maxOpenConnectionStr != "" {
+		maxOpenConnection, _ = strconv.Atoi(maxOpenConnectionStr)
+	}
+
+	slog.Info("max open connections", "max", maxOpenConnection)
+
 	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
+	db.SetMaxOpenConns(maxOpenConnection)
 	db.SetMaxIdleConns(10)
 
 	return db, nil
