@@ -16,4 +16,5 @@ func RegisterEndpoints(r *gin.Engine, db *sql.DB) {
 	r.GET("/metrics", metricsHandler.Get)
 	r.GET("/slow-query", queryHandler.SlowQuery)
 	r.GET("/heavy", queryHandler.Heavy)
+	r.GET("/heavy-chunk", queryHandler.HeavyWithChunk)
 }
